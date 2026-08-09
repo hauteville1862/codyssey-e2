@@ -1,2 +1,38 @@
 class QuizGame:
-    pass
+    def __init__(self, q_list):
+        self.question_number = 0
+        self.score = 0
+        self.question_list = q_list
+
+    def still_has_questions(self):
+        return self.question_number < len(self.question_list)
+
+    def next_question(self):
+        current_question = self.question_list[self.question_number]
+        self.question_number += 1
+        
+        print(f"\nQ.{self.question_number}: {current_question.question}")
+        
+        # 보기 출력 (1. 보기1, 2. 보기2...)
+        for i, choice in enumerate(current_question.choices):
+            print(f"   {i + 1}) {choice}")
+
+        # 사용자 입력 및 유효성 검사
+        user_answer = ""
+        while user_answer not in ["1", "2", "3", "4"]:
+            user_answer = input("\n정답을 입력하세요 (1-4): ")
+            if user_answer not in ["1", "2", "3", "4"]:
+                print("❌ 잘못된 입력입니다. 1번부터 4번 사이의 숫자를 입력해주세요.")
+
+        self.check_answer(user_answer, current_question.answer)
+
+    def check_answer(self, user_answer, correct_answer):
+        # JSON의 answer는 숫자(int)이므로 문자열로 변환하여 비교
+        if user_answer == str(correct_answer):
+            self.score += 1
+            print("✅ 정답입니다!")
+        else:
+            print("❌ 틀렸습니다.")
+            print(f"정답은 {correct_answer}번이었습니다.")
+        
+        print(f"현재 점수: {self.score}/{self.question_number}")
