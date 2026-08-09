@@ -1,3 +1,4 @@
+import copy
 import json
 import os
 import sys
@@ -6,21 +7,83 @@ from QuizGame import QuizGame
 
 sys.stdout.reconfigure(encoding="utf-8")
 
+# main.py와 같은 apps 폴더의 state.json을 사용한다 (실행 위치와 무관하게 동작)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(BASE_DIR, "state.json")
+
+# 파일이 없거나 손상된 경우 사용할 기본 퀴즈 데이터 (5개 이상)
+DEFAULT_DATA = {
+    "high_score": 0,
+    "questions": [
+        {
+            "question": "'레 미제라블'의 저자로 프랑스의 대문호인 작가는?",
+            "options": ["빅토르 위고", "에밀 졸라", "기 드 모파상", "알베르 카뮈"],
+            "answer": 1,
+        },
+        {
+            "question": "소설 '1984'와 '동물농장'을 쓴 영국 작가는?",
+            "options": ["올더스 헉슬리", "조지 오웰", "버지니아 울프", "제임스 조이스"],
+            "answer": 2,
+        },
+        {
+            "question": "1946년 노벨 문학상을 수상했으며, '데미안', '수레바퀴 아래서' 등을 집필한 독일의 작가는?",
+            "options": ["요한 볼프강 폰 괴테", "헤르만 헤세", "라이너 마리아 릴케", "프란츠 카프카"],
+            "answer": 2,
+        },
+        {
+            "question": "미국 잃어버린 세대의 대표 작가로 '위대한 개츠비'를 쓴 사람은?",
+            "options": ["윌리엄 포크너", "어니스트 헤밍웨이", "존 스타인벡", "F. 스콧 피츠제럴드"],
+            "answer": 4,
+        },
+        {
+            "question": "러시아 문학의 거장으로 '죄와 벌'을 집필한 작가는?",
+            "options": ["표도르 도스토옙스키", "레프 톨스토이", "안톤 체호프", "이반 투르게네프"],
+            "answer": 1,
+        },
+    ],
+}
+
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
+def get_valid_int(prompt, min_value, max_value):
+    """공백 제거, 빈 입력, 숫자 변환 실패, 범위 초과를 모두 처리하는 정수 입력."""
+    while True:
+        raw = input(prompt).strip()
+        if raw == "":
+            print("⚠️ 입력이 비어 있습니다. 다시 입력해주세요.")
+            continue
+        try:
+            value = int(raw)
+        except ValueError:
+            print("⚠️ 숫자만 입력 가능합니다.")
+            continue
+        if not (min_value <= value <= max_value):
+            print(f"⚠️ {min_value}~{max_value} 사이의 숫자를 입력해주세요.")
+            continue
+        return value
+
 def load_data():
-    """파일에서 데이터를 로드합니다."""
+    """파일에서 데이터를 로드합니다. 파일이 없거나 손상된 경우 기본 데이터로 대체합니다."""
     try:
-        with open("data.json", "r", encoding="utf-8") as file:
-            return json.load(file)
+        with open(DATA_PATH, "r", encoding="utf-8") as file:
+            data = json.load(file)
+        if "high_score" not in data or "questions" not in data:
+            raise ValueError("state.json 구조가 올바르지 않습니다.")
+        return data
     except FileNotFoundError:
-        # 파일이 없을 경우 초기 구조 생성
-        return {"high_score": 0, "questions": []}
+        # 파일이 없을 경우 기본 퀴즈 데이터 사용
+        return copy.deepcopy(DEFAULT_DATA)
+    except (json.JSONDecodeError, ValueError):
+        # 파일이 손상된 경우 기본 데이터로 복구
+        print("\n⚠️ 데이터 파일이 손상되어 기본 퀴즈 데이터로 초기화합니다.")
+        recovered = copy.deepcopy(DEFAULT_DATA)
+        save_data(recovered)
+        return recovered
 
 def save_data(data):
     """데이터를 파일에 저장합니다."""
-    with open("data.json", "w", encoding="utf-8") as file:
+    with open(DATA_PATH, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
 def run_quiz():
@@ -53,22 +116,20 @@ def add_new_question():
     """2. 퀴즈 추가"""
     clear_screen()
     print("🆕 [새 문제 추가]")
-    question = input("문제 내용을 입력하세요: ")
-    
+    question = input("문제 내용을 입력하세요: ").strip()
+    while question == "":
+        print("⚠️ 문제 내용은 비어 있을 수 없습니다.")
+        question = input("문제 내용을 입력하세요: ").strip()
+
     options = []
     for i in range(1, 5):
-        opt = input(f"보기 {i}번을 입력하세요: ")
+        opt = input(f"보기 {i}번을 입력하세요: ").strip()
+        while opt == "":
+            print("⚠️ 보기 내용은 비어 있을 수 없습니다.")
+            opt = input(f"보기 {i}번을 입력하세요: ").strip()
         options.append(opt)
-    
-    while True:
-        try:
-            answer = int(input("정답 번호를 입력하세요 (1-4): "))
-            if 1 <= answer <= 4:
-                break
-            else:
-                print("1에서 4 사이의 숫자를 입력해주세요.")
-        except ValueError:
-            print("숫자만 입력 가능합니다.")
+
+    answer = get_valid_int("정답 번호를 입력하세요 (1-4): ", 1, 4)
 
     data = load_data()
     new_q = {"question": question, "options": options, "answer": answer}
@@ -115,21 +176,26 @@ def main_menu():
         print("  5. 종료")
         print("-"*40)
         
-        choice = input("메뉴를 선택하세요 (1-5): ")
+        choice = get_valid_int("메뉴를 선택하세요 (1-5): ", 1, 5)
 
-        if choice == "1":
+        if choice == 1:
             run_quiz()
-        elif choice == "2":
+        elif choice == 2:
             add_new_question()
-        elif choice == "3":
+        elif choice == 3:
             view_question_list()
-        elif choice == "4":
+        elif choice == 4:
             show_high_score()
-        elif choice == "5":
+        elif choice == 5:
             print("\n게임을 종료합니다. 이용해주셔서 감사합니다! 👋")
             break
-        else:
-            input("\n❌ 잘못된 입력입니다. 1~5 사이의 숫자를 입력하세요.")
 
 if __name__ == "__main__":
-    main_menu()
+    try:
+        main_menu()
+    except KeyboardInterrupt:
+        print("\n\n⚠️ 강제 종료 신호(Ctrl+C)를 감지했습니다. 안전하게 종료합니다.")
+        sys.exit(0)
+    except EOFError:
+        print("\n\n⚠️ 입력이 종료되어 프로그램을 안전하게 종료합니다.")
+        sys.exit(0)

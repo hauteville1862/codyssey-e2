@@ -17,12 +17,16 @@ class QuizGame:
         for i, choice in enumerate(current_question.choices):
             print(f"   {i + 1}) {choice}")
 
-        # 사용자 입력 및 유효성 검사
-        user_answer = ""
-        while user_answer not in ["1", "2", "3", "4"]:
-            user_answer = input("\n정답을 입력하세요 (1-4): ")
+        # 사용자 입력 및 유효성 검사 (공백 제거, 빈 입력, 범위 초과 처리)
+        while True:
+            user_answer = input("\n정답을 입력하세요 (1-4): ").strip()
+            if user_answer == "":
+                print("❌ 입력이 비어 있습니다. 1번부터 4번 사이의 숫자를 입력해주세요.")
+                continue
             if user_answer not in ["1", "2", "3", "4"]:
                 print("❌ 잘못된 입력입니다. 1번부터 4번 사이의 숫자를 입력해주세요.")
+                continue
+            break
 
         self.check_answer(user_answer, current_question.answer)
 
