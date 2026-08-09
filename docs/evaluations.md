@@ -30,9 +30,11 @@
 
 **1-7.** clone과 pull 실습 수행 흔적을 README 또는 스크린샷으로 확인할 수 있는가?
 
-> 부분 충족: `git pull origin main` 실행 스크린샷(`img/git-pull.png`)은 있으나, 별도 로컬
-> 디렉터리에 clone하고 그곳에서 변경 후 push하는 과정의 스크린샷/기록은 아직 없음. 인터뷰
-> 시 pull 실습만 근거로 제시 가능하며, clone 실습은 추가로 수행·기록해야 함.
+> 충족: 별도 로컬 디렉터리(`clone-test`)에 저장소를 clone한 스크린샷(`img/git-clone.png`)과,
+> 기존 작업 디렉터리에서 `git pull origin main`을 실행한 스크린샷(`img/git-pull.png`)이 모두
+> README 7번 섹션에 있음. 다만 clone한 디렉터리 안에서 실제로 변경 → commit → push까지
+> 수행한 스크린샷은 별도로 남기지 않았으므로, 인터뷰에서 그 세부 과정까지 묻는다면 clone·pull
+> 명령 자체의 실행 확인 수준이라는 점을 밝히고 답하면 됨.
 
 **(PASS / FAIL)**
 

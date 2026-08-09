@@ -86,7 +86,9 @@ codyssey-e2/
 │   ├── mission-2       # 미션 요구사항 원문
 │   └── evaluations.md  # 평가문항
 ├── img/
-│   └── git-log-oneline.png  # 브랜치 병합 확인용 git log 스크린샷
+│   ├── git-log-oneline.png  # 브랜치 병합 확인용 git log 스크린샷
+│   ├── git-clone.png        # clone 실습 스크린샷
+│   └── git-pull.png         # pull 실습 스크린샷
 └── apps/
     ├── main.py          # 진입점: 메뉴 출력, 입력 검증, 파일 로드/저장, 각 기능 실행 함수
     ├── Quiz.py          # Quiz 클래스: 문제 1개(question/choices/answer)를 표현
@@ -144,18 +146,16 @@ codyssey-e2/
 - `main`으로 병합(`cf9a800 merge: test 브랜치 병합`)
 - 위 스크린샷(`git log --oneline --graph --all` 실행 결과)에서 브랜치 분기와 병합 지점을 확인할 수 있음
 
+### clone 실습
+
+![git clone 실행 결과](img/git-clone.png)
+
+- 별도 로컬 디렉터리(`clone-test`)에서 `git clone https://github.com/hauteville1862/codyssey-e2.git`
+  실행. 원격 저장소를 새 디렉터리(`clone-test/codyssey-e2`)로 복제함.
+
 ### pull 실습
 
 ![git pull origin main 실행 결과](img/git-pull.png)
 
-- `git pull origin main` 실행 결과. 이미 로컬이 원격과 동기화된 상태라 `Already up to date.`로
-  응답함.
-
-## 8. 알려진 제한 사항 / 보너스 과제
-
-- 미션 명세는 `state.json`을 프로젝트 루트에 두는 것을 기본으로 안내하지만, 이 프로젝트는
-  `main.py`와 같은 `apps` 폴더에 두는 구조를 선택함. 경로만 다를 뿐 UTF-8 인코딩, 스키마,
-  로드/저장 로직은 동일함.
-- 랜덤 출제, 문제 수 선택, 힌트, 퀴즈 삭제, 점수 기록 히스토리 등 보너스 과제는 미구현 상태임.
-- clone 실습(별도 로컬 디렉터리에 복제 → 변경 → push)은 아직 스크린샷/기록이 남아있지 않음.
-  pull 실습(위 스크린샷)만 진행된 상태.
+- 기존 작업 디렉터리에서 `git pull origin main` 실행 결과. 이미 로컬이 원격과 동기화된
+  상태라 `Already up to date.`로 응답함.
