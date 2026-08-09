@@ -85,6 +85,8 @@ codyssey-e2/
 ├── docs/
 │   ├── mission-2       # 미션 요구사항 원문
 │   └── evaluations.md  # 평가문항
+├── img/
+│   └── git-log-oneline.png  # 브랜치 병합 확인용 git log 스크린샷
 └── apps/
     ├── main.py          # 진입점: 메뉴 출력, 입력 검증, 파일 로드/저장, 각 기능 실행 함수
     ├── Quiz.py          # Quiz 클래스: 문제 1개(question/choices/answer)를 표현
@@ -132,11 +134,21 @@ codyssey-e2/
   `question`/`options`/`answer`처럼 필드에 이름을 붙인 `dict`를 사용하면 리스트로만 저장하는
   것보다 값의 의미가 명확하고, 필드가 추가되어도(예: 힌트) 기존 데이터와 호환되도록 확장하기 쉬움.
 
-## 7. 알려진 제한 사항 / 보너스 과제
+## 7. Git 작업 이력
+
+기능(`get_default_data()` 추가)을 `TEST` 브랜치에서 작업한 뒤 `main`으로 병합함.
+
+![git log --oneline --graph 결과](img/git-log-oneline.png)
+
+- `TEST` 브랜치에서 커밋(`1a29cf0 feat: ...get_default_data() 추가`)
+- `main`으로 병합(`cf9a800 merge: test 브랜치 병합`)
+- 위 스크린샷(`git log --oneline --graph --all` 실행 결과)에서 브랜치 분기와 병합 지점을 확인할 수 있음
+
+## 8. 알려진 제한 사항 / 보너스 과제
 
 - 미션 명세는 `state.json`을 프로젝트 루트에 두는 것을 기본으로 안내하지만, 이 프로젝트는
   `main.py`와 같은 `apps` 폴더에 두는 구조를 선택함. 경로만 다를 뿐 UTF-8 인코딩, 스키마,
   로드/저장 로직은 동일함.
 - 랜덤 출제, 문제 수 선택, 힌트, 퀴즈 삭제, 점수 기록 히스토리 등 보너스 과제는 미구현 상태임.
-- Git 브랜치 생성·병합, clone/pull 실습은 코드와 별개로 실습 후 `git log --oneline --graph`
-  스크린샷 등으로 별도 제출이 필요함.
+- clone과 pull 실습은 아직 진행하지 않음. 별도 로컬 디렉터리에 clone → 변경사항 push →
+  기존 디렉터리에서 pull 절차를 수행한 뒤 흔적을 남겨야 함.
