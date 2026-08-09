@@ -14,8 +14,10 @@ class QuizGame:
         print(f"\nQ.{self.question_number}: {current_question.question}")
         
         # 보기 출력 (1. 보기1, 2. 보기2...)
-        for i, choice in enumerate(current_question.choices):
-            print(f"   {i + 1}) {choice}")
+        number = 1
+        for choice in current_question.choices:
+            print(f"   {number}) {choice}")
+            number += 1
 
         # 사용자 입력 및 유효성 검사 (공백 제거, 빈 입력, 범위 초과 처리)
         while True:

@@ -4,9 +4,8 @@ import sys
 from Quiz import Quiz
 from QuizGame import QuizGame
 
-# main.py와 같은 apps 폴더의 state.json을 사용한다 (실행 위치와 무관하게 동작)
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_PATH = os.path.join(BASE_DIR, "state.json")
+# apps 폴더에서 실행한다고 가정하고, 같은 폴더의 state.json을 사용한다
+DATA_PATH = "state.json"
 
 def get_default_data():
     """파일이 없거나 손상된 경우 사용할 기본 퀴즈 데이터 (5개 이상). 호출마다 새 dict를 생성한다."""
@@ -56,7 +55,7 @@ def get_valid_int(prompt, min_value, max_value):
         except ValueError:
             print("[알림] 숫자만 입력 가능합니다.")
             continue
-        if not (min_value <= value <= max_value):
+        if value < min_value or value > max_value:
             print(f"[알림] {min_value}~{max_value} 사이의 숫자를 입력해주세요.")
             continue
         return value
@@ -144,8 +143,10 @@ def view_question_list():
     if not data["questions"]:
         print("등록된 문제가 없습니다.")
     else:
-        for i, q in enumerate(data["questions"], 1):
-            print(f"{i}. {q['question']} (정답: {q['answer']}번)")
+        number = 1
+        for q in data["questions"]:
+            print(f"{number}. {q['question']} (정답: {q['answer']}번)")
+            number += 1
     
     print("-" * 30)
     input("\n엔터를 누르면 메뉴로 돌아갑니다...")
