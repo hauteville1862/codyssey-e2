@@ -21,10 +21,10 @@ class QuizGame:
         while True:
             user_answer = input("\n정답을 입력하세요 (1-4): ").strip()
             if user_answer == "":
-                print("❌ 입력이 비어 있습니다. 1번부터 4번 사이의 숫자를 입력해주세요.")
+                print("[알림] 입력이 비어 있습니다. 1번부터 4번 사이의 숫자를 입력해주세요.")
                 continue
             if user_answer not in ["1", "2", "3", "4"]:
-                print("❌ 잘못된 입력입니다. 1번부터 4번 사이의 숫자를 입력해주세요.")
+                print("[알림] 잘못된 입력입니다. 1번부터 4번 사이의 숫자를 입력해주세요.")
                 continue
             break
 
@@ -34,9 +34,9 @@ class QuizGame:
         # JSON의 answer는 숫자(int)이므로 문자열로 변환하여 비교
         if user_answer == str(correct_answer):
             self.score += 1
-            print("✅ 정답입니다!")
+            print("정답입니다!")
         else:
-            print("❌ 틀렸습니다.")
+            print("틀렸습니다.")
             print(f"정답은 {correct_answer}번이었습니다.")
         
         print(f"현재 점수: {self.score}/{self.question_number}")

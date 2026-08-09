@@ -4,8 +4,6 @@ import sys
 from Quiz import Quiz
 from QuizGame import QuizGame
 
-sys.stdout.reconfigure(encoding="utf-8")
-
 # main.py와 같은 apps 폴더의 state.json을 사용한다 (실행 위치와 무관하게 동작)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(BASE_DIR, "state.json")
@@ -51,15 +49,15 @@ def get_valid_int(prompt, min_value, max_value):
     while True:
         raw = input(prompt).strip()
         if raw == "":
-            print("⚠️ 입력이 비어 있습니다. 다시 입력해주세요.")
+            print("[알림] 입력이 비어 있습니다. 다시 입력해주세요.")
             continue
         try:
             value = int(raw)
         except ValueError:
-            print("⚠️ 숫자만 입력 가능합니다.")
+            print("[알림] 숫자만 입력 가능합니다.")
             continue
         if not (min_value <= value <= max_value):
-            print(f"⚠️ {min_value}~{max_value} 사이의 숫자를 입력해주세요.")
+            print(f"[알림] {min_value}~{max_value} 사이의 숫자를 입력해주세요.")
             continue
         return value
 
@@ -76,7 +74,7 @@ def load_data():
         return get_default_data()
     except (json.JSONDecodeError, ValueError):
         # 파일이 손상된 경우 기본 데이터로 복구
-        print("\n⚠️ 데이터 파일이 손상되어 기본 퀴즈 데이터로 초기화합니다.")
+        print("\n[알림] 데이터 파일이 손상되어 기본 퀴즈 데이터로 초기화합니다.")
         recovered = get_default_data()
         save_data(recovered)
         return recovered
@@ -90,7 +88,7 @@ def run_quiz():
     """1. 퀴즈 시작"""
     data = load_data()
     if not data["questions"]:
-        print("\n❌ 등록된 문제가 없습니다. 문제를 먼저 추가해주세요!")
+        print("\n[알림] 등록된 문제가 없습니다. 문제를 먼저 추가해주세요!")
         input("\n엔터를 누르면 메뉴로 돌아갑니다...")
         return
 
@@ -103,10 +101,10 @@ def run_quiz():
         quiz.next_question()
 
     print("\n" + "="*30)
-    print(f"🎉 퀴즈 종료! 최종 점수: {quiz.score}/{len(question_bank)}")
-    
+    print(f"퀴즈 종료! 최종 점수: {quiz.score}/{len(question_bank)}")
+
     if quiz.score > data["high_score"]:
-        print(f"🎊 최고 점수 갱신! ({data['high_score']} -> {quiz.score})")
+        print(f"최고 점수 갱신! ({data['high_score']} -> {quiz.score})")
         data["high_score"] = quiz.score
         save_data(data)
     print("="*30)
@@ -115,17 +113,17 @@ def run_quiz():
 def add_new_question():
     """2. 퀴즈 추가"""
     clear_screen()
-    print("🆕 [새 문제 추가]")
+    print("[새 문제 추가]")
     question = input("문제 내용을 입력하세요: ").strip()
     while question == "":
-        print("⚠️ 문제 내용은 비어 있을 수 없습니다.")
+        print("[알림] 문제 내용은 비어 있을 수 없습니다.")
         question = input("문제 내용을 입력하세요: ").strip()
 
     options = []
     for i in range(1, 5):
         opt = input(f"보기 {i}번을 입력하세요: ").strip()
         while opt == "":
-            print("⚠️ 보기 내용은 비어 있을 수 없습니다.")
+            print("[알림] 보기 내용은 비어 있을 수 없습니다.")
             opt = input(f"보기 {i}번을 입력하세요: ").strip()
         options.append(opt)
 
@@ -135,14 +133,14 @@ def add_new_question():
     new_q = {"question": question, "options": options, "answer": answer}
     data["questions"].append(new_q)
     save_data(data)
-    print("\n✅ 문제가 성공적으로 추가되었습니다!")
+    print("\n문제가 성공적으로 추가되었습니다!")
     input("\n엔터를 누르면 메뉴로 돌아갑니다...")
 
 def view_question_list():
     """3. 퀴즈 목록 보기"""
     clear_screen()
     data = load_data()
-    print("📋 [등록된 퀴즈 목록]")
+    print("[등록된 퀴즈 목록]")
     if not data["questions"]:
         print("등록된 문제가 없습니다.")
     else:
@@ -156,7 +154,7 @@ def show_high_score():
     """4. 최고 점수 확인"""
     clear_screen()
     data = load_data()
-    print("🏆 [현재 최고 점수]")
+    print("[현재 최고 점수]")
     print(f"\n현재까지의 최고 기록은 {data['high_score']}점입니다.")
     print("\n더 높은 점수에 도전해보세요!")
     print("-" * 30)
@@ -167,7 +165,7 @@ def main_menu():
     while True:
         clear_screen()
         print("="*40)
-        print("      📚 세계 문학 작가 퀴즈 📚")
+        print("      세계 문학 작가 퀴즈")
         print("="*40)
         print("  1. 퀴즈 시작")
         print("  2. 퀴즈 추가")
@@ -187,15 +185,15 @@ def main_menu():
         elif choice == 4:
             show_high_score()
         elif choice == 5:
-            print("\n게임을 종료합니다. 이용해주셔서 감사합니다! 👋")
+            print("\n게임을 종료합니다. 이용해주셔서 감사합니다!")
             break
 
 if __name__ == "__main__":
     try:
         main_menu()
     except KeyboardInterrupt:
-        print("\n\n⚠️ 강제 종료 신호(Ctrl+C)를 감지했습니다. 안전하게 종료합니다.")
+        print("\n\n[알림] 강제 종료 신호(Ctrl+C)를 감지했습니다. 안전하게 종료합니다.")
         sys.exit(0)
     except EOFError:
-        print("\n\n⚠️ 입력이 종료되어 프로그램을 안전하게 종료합니다.")
+        print("\n\n[알림] 입력이 종료되어 프로그램을 안전하게 종료합니다.")
         sys.exit(0)
