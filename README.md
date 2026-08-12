@@ -9,7 +9,7 @@
 - **형태**: 콘솔 퀴즈 게임 1개 + GitHub 저장소 1개
 - **핵심 기능**: 퀴즈 풀기 / 퀴즈 추가 / 퀴즈 목록 보기 / 최고 점수 확인
 - **핵심 학습 목표**
-  - 클래스(`Quiz`, `QuizGame`)로 역할을 나눠 코드를 구조화함
+  - 클래스(`Quiz`, `QuizGame`, `Storage`)로 역할을 나눠 코드를 구조화함
   - JSON 파일(`state.json`)로 데이터를 저장·불러와 데이터 영속성을 구현함
   - 잘못된 입력, 파일 손상, 강제 종료(Ctrl+C) 상황에서도 안전하게 동작하도록 예외 처리함
   - Git으로 기능 단위 커밋 및 브랜치 작업 이력을 관리함
@@ -46,8 +46,8 @@ python main.py
 ```
 
 > `state.json`은 상대경로(`"state.json"`)로 열기 때문에 **반드시 `apps` 폴더에서 실행**해야
-> 함(`cd apps && python main.py`). 다른 위치에서 실행하면 파일을 찾지 못해 빈 상태(문제 0개)로
-> 시작함.
+> 함(`cd apps && python main.py`). 다른 위치에서 실행하면 그 위치의 `state.json`을 찾지 못해
+> 기본 퀴즈 데이터(5문제, `Storage.get_default_data()`)로 시작함.
 
 ## 4. 기능 목록
 
@@ -72,9 +72,8 @@ python main.py
 `Ctrl+C`(`KeyboardInterrupt`) 또는 입력 스트림 종료(`EOFError`) 발생 시 트레이스백 없이 안내
 메시지를 출력하고 정상 종료(exit code 0)함.
 
-`state.json`이 없거나(첫 실행) 손상되어 파싱에 실패하면 빈 상태(`{"high_score": 0, "questions": []}`)로
-자동 초기화함(손상된 경우 파일에도 다시 저장). 이 경우 퀴즈 목록이 비어 있으므로 메뉴 2번으로
-문제를 먼저 추가해야 함.
+`state.json`이 없거나(첫 실행) 손상되어 파싱에 실패하면 `Storage.get_default_data()`가 제공하는
+기본 퀴즈 데이터(5문제, 최고 점수 0)로 자동 초기화함(손상된 경우 파일에도 다시 저장).
 
 ## 5. 파일 구조
 
@@ -90,9 +89,10 @@ codyssey-e2/
 │   ├── git-clone.png        # clone 실습 스크린샷
 │   └── git-pull.png         # pull 실습 스크린샷
 └── apps/
-    ├── main.py          # 진입점: 메뉴 출력, 입력 검증, 파일 로드/저장, 각 기능 실행 함수
+    ├── main.py          # 진입점: 메뉴 출력, 입력 검증, 각 기능 실행 함수(CLI)
     ├── Quiz.py          # Quiz 클래스: 문제 1개(question/choices/answer)를 표현
     ├── QuizGame.py      # QuizGame 클래스: 퀴즈 진행(출제·정답 확인·점수 계산) 담당
+    ├── Storage.py       # Storage 클래스: state.json 로드/저장, 기본 퀴즈 데이터 제공
     └── state.json       # 퀴즈 데이터 + 최고 점수 저장 파일 (UTF-8)
 ```
 
@@ -102,9 +102,11 @@ codyssey-e2/
   `answer`(정답 번호 1~4) 속성을 가짐.
 - **`QuizGame`** — 퀴즈 진행을 담당. 문제 목록을 순회하며 출제하고(`next_question`), 사용자
   입력을 검증한 뒤 정답 여부를 판정·점수를 누적함(`check_answer`).
-- **`main.py`** — 입력 처리(메뉴/추가 시 검증)와 데이터 저장·불러오기(JSON 입출력)를 담당함.
-  `Quiz`/`QuizGame`은 파일 입출력을 알지 못하고, `main.py`가 `state.json`에서 읽은 `dict`를
-  `Quiz` 인스턴스로 변환해 `QuizGame`에 넘김. 화면/게임 로직과 저장 로직을 분리한 구조.
+- **`Storage`** — `state.json` 파일 입출력을 전담. 파일을 읽어 오고(`load`), 저장하며(`save`),
+  파일이 없거나 손상된 경우 사용할 기본 퀴즈 데이터를 제공함(`get_default_data`).
+- **`main.py`** — 메뉴 출력과 입력 처리(CLI)를 담당. `Quiz`/`QuizGame`은 파일 입출력을,
+  `Storage`는 화면/게임 로직을 전혀 알지 못하며, `main.py`가 `Storage` 인스턴스가 돌려준
+  `dict`를 `Quiz` 인스턴스로 변환해 `QuizGame`에 넘기는 조립 역할을 함.
 
 ## 6. 데이터 파일 설명 (`state.json`)
 
@@ -118,7 +120,7 @@ codyssey-e2/
     "questions": [
       {
         "question": "'레 미제라블'의 저자로 프랑스의 대문호인 작가는?",
-        "options": ["빅토르 위고", "에밀 졸라", "기 드 모파상", "알베르 카뮈"],
+        "choices": ["빅토르 위고", "에밀 졸라", "기 드 모파상", "알베르 카뮈"],
         "answer": 1
       }
     ]
@@ -130,10 +132,10 @@ codyssey-e2/
   | `high_score` | `int` | 지금까지 기록된 최고 점수(맞힌 문제 수) |
   | `questions` | `list[dict]` | 등록된 전체 문제 목록 |
   | `questions[].question` | `str` | 문제 내용 (`Quiz.question`에 대응) |
-  | `questions[].options` | `list[str]` (4개) | 보기 4개 (`Quiz.choices`에 대응) |
+  | `questions[].choices` | `list[str]` (4개) | 보기 4개 (`Quiz.choices`에 대응) |
   | `questions[].answer` | `int` (1~4) | 정답 보기 번호 (`Quiz.answer`에 대응) |
 
-  `question`/`options`/`answer`처럼 필드에 이름을 붙인 `dict`를 사용하면 리스트로만 저장하는
+  `question`/`choices`/`answer`처럼 필드에 이름을 붙인 `dict`를 사용하면 리스트로만 저장하는
   것보다 값의 의미가 명확하고, 필드가 추가되어도(예: 힌트) 기존 데이터와 호환되도록 확장하기 쉬움.
 
 ## 7. Git 작업 이력
