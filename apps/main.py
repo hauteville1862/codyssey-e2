@@ -43,7 +43,7 @@ def run_quiz():
 
     question_bank = []
     for q in data["questions"]:
-        question_bank.append(Quiz(q["question"], q["options"], q["answer"]))
+        question_bank.append(Quiz(q["question"], q["choices"], q["answer"]))
 
     quiz = QuizGame(question_bank)
     while quiz.still_has_questions():
@@ -70,18 +70,18 @@ def add_new_question():
         print("[알림] 문제 내용은 비어 있을 수 없습니다.")
         question = input("문제 내용을 입력하세요: ").strip()
 
-    options = []
+    choices = []
     for i in range(1, 5):
         opt = input(f"보기 {i}번을 입력하세요: ").strip()
         while opt == "":
             print("[알림] 보기 내용은 비어 있을 수 없습니다.")
             opt = input(f"보기 {i}번을 입력하세요: ").strip()
-        options.append(opt)
+        choices.append(opt)
 
     answer = get_valid_int("정답 번호를 입력하세요 (1-4): ", 1, 4)
 
     data = storage.load()
-    new_q = {"question": question, "options": options, "answer": answer}
+    new_q = {"question": question, "choices": choices, "answer": answer}
     data["questions"].append(new_q)
     storage.save(data)
 
