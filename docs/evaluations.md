@@ -4,19 +4,19 @@
 
 **1-1.** 프로그램 실행 시 메뉴가 정상적으로 표시되고, 퀴즈 풀기/추가/목록/점수 확인 기능이 모두 동작하는가?
 
-> 충족: `main.py`의 `main_menu()`가 메뉴를 출력하고, 선택값(1~5)에 따라 `run_quiz()` / `add_new_question()` / `view_question_list()` / `show_high_score()` / 종료를 각각 호출함. 4개 기능 모두 실행 테스트로 정상 동작을 확인함(`git log`의 각 기능 커밋 참고).
+> 충족: [`main.py`](../apps/main.py)의 [`main_menu()`](../apps/main.py#L253-L281)가 메뉴를 출력하고, 선택값(1~5)에 따라 [`run_quiz()`](../apps/main.py#L155-L187) / [`add_new_question()`](../apps/main.py#L190-L220) / [`view_question_list()`](../apps/main.py#L223-L239) / [`show_high_score()`](../apps/main.py#L242-L250) / 종료를 각각 호출함. 4개 기능 모두 실행 테스트로 정상 동작을 확인함(`git log`의 각 기능 커밋 참고).
 
 **1-2.** 퀴즈 풀기 시 정답/오답 판정이 정확하고, 최소 입력 오류 케이스(공백/문자/범위 밖/빈 입력)에 대한 처리가 되어 있는가?
 
-> 충족: `QuizGame.check_answer()`가 문자열 비교로 정답/오답을 판정함. 숫자 입력이 필요한 모든 곳(`main.py`의 `get_valid_int()`, `QuizGame.next_question()`)에서 공백 제거(`strip()`), 빈 입력, 숫자 변환 실패, 범위 초과를 각각 안내 메시지와 함께 재입력 처리함.
+> 충족: [`QuizGame.check_answer()`](../apps/QuizGame.py#L60-L75)가 문자열 비교로 정답/오답을 판정함. 숫자 입력이 필요한 모든 곳([`main.py`](../apps/main.py)의 [`get_valid_int()`](../apps/main.py#L68-L108), [`QuizGame.next_question()`](../apps/QuizGame.py#L31-L58))에서 공백 제거(`strip()`), 빈 입력, 숫자 변환 실패, 범위 초과를 각각 안내 메시지와 함께 재입력 처리함.
 
 **1-3.** 프로그램 종료 후 재실행해도 추가한 퀴즈와 최고 점수가 유지되는가?
 
-> 충족: `add_new_question()`과 `run_quiz()`의 최고 점수 갱신 시점에 `save_data()`로 `state.json`에 즉시 저장하며, 재실행 시 `load_data()`가 이를 다시 읽어옴. 실행 테스트로 재시작 후 데이터 유지를 확인함.
+> 충족: [`add_new_question()`](../apps/main.py#L190-L220)과 [`run_quiz()`](../apps/main.py#L155-L187)의 최고 점수 갱신 시점에 [`save_data()`](../apps/main.py#L142-L152)로 [`state.json`](../apps/state.json)에 즉시 저장하며, 재실행 시 [`load_data()`](../apps/main.py#L111-L139)가 이를 다시 읽어옴. 실행 테스트로 재시작 후 데이터 유지를 확인함.
 
 **1-4.** 기본 퀴즈가 5개 이상 포함되어 있는가?
 
-> 충족: `apps/state.json`에 세계 문학 작가 관련 문제 5개가 포함되어 있음.
+> 충족: [`apps/state.json`](../apps/state.json#L3-L54)에 세계 문학 작가 관련 문제 5개가 포함되어 있음.
 
 **1-5.** GitHub 저장소에 코드가 업로드되어 있고, 10개 이상의 의미 있는 커밋이 존재하는가?
 
@@ -24,7 +24,7 @@
 
 **1-6.** 브랜치 생성 및 병합 기록이 `git log --oneline --graph`에서 확인되는가?
 
-> 충족: `TEST` 브랜치를 생성해 `get_default_data()` 추가 작업을 커밋(`1a29cf0`)한 뒤 `main`으로
+> 충족: `TEST` 브랜치를 생성해 [`get_default_data()`](../apps/main.py#L17-L55) 추가 작업을 커밋(`1a29cf0`)한 뒤 `main`으로
 > 병합함(`cf9a800 merge: test 브랜치 병합`). `git log --oneline --graph --all` 실행 결과
 > (`img/git-log-oneline.png`)에서 분기·병합 지점이 그대로 확인됨.
 
@@ -44,23 +44,23 @@
 
 **2-1.** Quiz와 QuizGame 등 클래스들의 책임을 어떻게 나눴는지 설명할 수 있는가?
 
-> 충족: `Quiz`는 문제 하나의 데이터(`question`/`choices`/`answer`)만 담는 값 객체이고, `QuizGame`은 문제 목록을 순회하며 출제·정답 판정·점수 계산을 담당하는 진행 객체임. README 5번 섹션 "클래스 책임 분리"에 정리되어 있음.
+> 충족: [`Quiz`](../apps/Quiz.py)는 문제 하나의 데이터(`question`/`choices`/`answer`)만 담는 값 객체이고, [`QuizGame`](../apps/QuizGame.py)은 문제 목록을 순회하며 출제·정답 판정·점수 계산을 담당하는 진행 객체임. [README 5번 섹션 "클래스 책임 분리"](../README.md#L99-L107)에 정리되어 있음.
 
 **2-2.** "입력 처리(검증)", "게임 진행", "데이터 저장/불러오기" 로직을 어떤 기준으로 분리했는지 설명할 수 있는가?
 
-> 충족: 입력 검증은 `main.py`의 `get_valid_int()`와 `QuizGame.next_question()` 내부에, 게임 진행은 `QuizGame`(출제·판정·점수)에, 저장/불러오기는 `main.py`의 `load_data()`/`save_data()`에 위치함. `Quiz`/`QuizGame`은 파일 입출력을 전혀 알지 못하고, `main.py`가 `state.json` ↔ 객체 변환을 전담하는 구조.
+> 충족: 입력 검증은 [`main.py`](../apps/main.py)의 [`get_valid_int()`](../apps/main.py#L68-L108)와 [`QuizGame.next_question()`](../apps/QuizGame.py#L31-L58) 내부에, 게임 진행은 [`QuizGame`](../apps/QuizGame.py)(출제·판정·점수)에, 저장/불러오기는 [`main.py`](../apps/main.py)의 [`load_data()`](../apps/main.py#L111-L139)/[`save_data()`](../apps/main.py#L142-L152)에 위치함. [`Quiz`](../apps/Quiz.py)/[`QuizGame`](../apps/QuizGame.py)은 파일 입출력을 전혀 알지 못하고, [`main.py`](../apps/main.py)가 [`state.json`](../apps/state.json) ↔ 객체 변환을 전담하는 구조.
 
 **2-3.** state.json 읽기/쓰기 흐름이 프로그램의 어디에서, 어떤 순서로 발생하는지 설명할 수 있는가?
 
-> 충족: 각 메뉴 함수(`run_quiz`, `add_new_question`, `view_question_list`, `show_high_score`) 시작 시 `load_data()`로 읽고, 데이터 변경(퀴즈 추가, 최고 점수 갱신) 직후 `save_data()`로 씀. 두 함수 모두 `apps/state.json` 하나의 경로(`DATA_PATH`)만 사용함.
+> 충족: 각 메뉴 함수([`run_quiz`](../apps/main.py#L155-L187), [`add_new_question`](../apps/main.py#L190-L220), [`view_question_list`](../apps/main.py#L223-L239), [`show_high_score`](../apps/main.py#L242-L250)) 시작 시 [`load_data()`](../apps/main.py#L111-L139)로 읽고, 데이터 변경(퀴즈 추가, 최고 점수 갱신) 직후 [`save_data()`](../apps/main.py#L142-L152)로 씀. 두 함수 모두 [`apps/state.json`](../apps/state.json) 하나의 경로([`DATA_PATH`](../apps/main.py#L14))만 사용함.
 
 **2-4.** Ctrl+C 또는 EOF 상황에서 "안전 종료"를 위해 어떤 처리를 했는지(또는 어떤 처리가 필요했는지) 설명할 수 있는가?
 
-> 충족: `main.py` 최하단 `if __name__ == "__main__":`에서 `main_menu()` 호출을 `try/except`로 감싸 `KeyboardInterrupt`(Ctrl+C)와 `EOFError`(입력 스트림 종료)를 각각 처리함. 트레이스백 없이 안내 메시지를 출력하고 `sys.exit(0)`으로 정상 종료함.
+> 충족: [`main.py`](../apps/main.py) 최하단 [`if __name__ == "__main__":`](../apps/main.py#L285-L296)에서 [`main_menu()`](../apps/main.py#L253-L281) 호출을 `try/except`로 감싸 `KeyboardInterrupt`(Ctrl+C)와 `EOFError`(입력 스트림 종료)를 각각 처리함. 트레이스백 없이 안내 메시지를 출력하고 `sys.exit(0)`으로 정상 종료함.
 
 **2-5.** 커밋을 어떤 단위로 나누었고, 커밋 메시지 규칙을 어떻게 정했는지 설명할 수 있는가?
 
-> 충족: 파일/기능 단위로 커밋을 나눴음(`Quiz`/`QuizGame` 생성, `main.py` 수정, README 수정 등). 다만 초반 커밋(`first commit`, `commit: data.json`)은 접두어 규칙 없이 작성했고, 이후부터 `update:`/`refactor:`/`chore:`처럼 변경 성격을 나타내는 접두어를 붙이는 방식으로 점차 일관성을 갖췄음 — 이 규칙이 처음부터 확립되어 있지는 않았다는 점은 인터뷰 시 그대로 설명 가능.
+> 충족: 파일/기능 단위로 커밋을 나눴음([`Quiz`](../apps/Quiz.py)/[`QuizGame`](../apps/QuizGame.py) 생성, [`main.py`](../apps/main.py) 수정, README 수정 등). 다만 초반 커밋(`first commit`, `commit: data.json`)은 접두어 규칙 없이 작성했고, 이후부터 `update:`/`refactor:`/`chore:`처럼 변경 성격을 나타내는 접두어를 붙이는 방식으로 점차 일관성을 갖췄음 — 이 규칙이 처음부터 확립되어 있지는 않았다는 점은 인터뷰 시 그대로 설명 가능.
 
 **(PASS / FAIL)**
 
@@ -70,26 +70,26 @@
 
 **3-1.** 클래스를 사용한 이유는 무엇이며, 함수만으로 구현할 때와 어떤 차이가 있는지 설명할 수 있는가?
 
-> 충족: 문제 하나(`question`/`choices`/`answer`)와 게임 진행 상태(`question_number`/`score`/`question_list`)처럼 "데이터 + 그 데이터를 다루는 동작"을 함께 묶기 위해 클래스를 사용함. 함수만으로 구현하면 이 상태들을 전역 변수나 여러 인자로 매번 넘겨야 해서 관리가 어려워짐.
+> 충족: 문제 하나([`question`/`choices`/`answer`](../apps/Quiz.py#L9-L19))와 게임 진행 상태([`question_number`/`score`/`question_list`](../apps/QuizGame.py#L9-L17))처럼 "데이터 + 그 데이터를 다루는 동작"을 함께 묶기 위해 클래스를 사용함. 함수만으로 구현하면 이 상태들을 전역 변수나 여러 인자로 매번 넘겨야 해서 관리가 어려워짐.
 
 **3-2.** JSON 파일로 데이터를 저장하는 이유와 JSON 형식의 특징을 설명할 수 있는가?
 
-> 충족: JSON은 파이썬의 `dict`/`list`와 구조가 거의 1:1로 대응되어 `json.load`/`json.dump`만으로 변환이 가능하고, 사람이 읽기 쉬운 텍스트 형식이라 `state.json`을 직접 열어 확인·수정하기도 쉬움. README 6번 섹션에 스키마와 함께 설명되어 있음.
+> 충족: JSON은 파이썬의 `dict`/`list`와 구조가 거의 1:1로 대응되어 `json.load`/`json.dump`만으로 변환이 가능하고, 사람이 읽기 쉬운 텍스트 형식이라 [`state.json`](../apps/state.json)을 직접 열어 확인·수정하기도 쉬움. [README 6번 섹션](../README.md#L109-L137)에 스키마와 함께 설명되어 있음.
 
 **3-3.** 파일 입출력에서 try/except가 필요한 이유(발생 가능한 실패 케이스 포함)를 설명할 수 있는가?
 
-> 충족: `load_data()`에서 `FileNotFoundError`(파일이 아직 없는 첫 실행)와 `json.JSONDecodeError`/`ValueError`(파일 내용이 손상되었거나 필수 키가 없는 경우)를 각각 처리함. try/except가 없다면 이 두 경우 프로그램이 그대로 크래시함.
+> 충족: [`load_data()`](../apps/main.py#L111-L139)에서 `FileNotFoundError`(파일이 아직 없는 첫 실행)와 `json.JSONDecodeError`/`ValueError`(파일 내용이 손상되었거나 필수 키가 없는 경우)를 각각 처리함. try/except가 없다면 이 두 경우 프로그램이 그대로 크래시함.
 
 **3-4.** 브랜치를 분리해 작업한 이유와 병합(merge)의 의미를 설명할 수 있는가?
 
-> 충족: `main`을 항상 정상 동작하는 상태로 유지하면서 `get_default_data()` 기능을 독립적으로
+> 충족: `main`을 항상 정상 동작하는 상태로 유지하면서 [`get_default_data()`](../apps/main.py#L17-L55) 기능을 독립적으로
 > 실험하기 위해 `TEST` 브랜치를 만들어 작업함. 병합(merge)은 `TEST` 브랜치에서 쌓인 커밋
 > 이력을 `main`에 합쳐, 두 브랜치에서 각각 진행된 변경 내용을 하나의 히스토리로 통합하는
 > 작업임(`cf9a800`가 그 병합 커밋).
 
 **3-5.** state.json 데이터 구조(필드/중첩 구조)를 현재 형태로 설계한 이유를 설명할 수 있는가?
 
-> 충족: `high_score`(전체 상태)와 `questions`(문제 목록)를 최상위에 두고, 각 문제를 `question`/`options`/`answer` 필드를 가진 dict로 표현함. 리스트만으로 저장하는 것보다 필드 이름이 있어 값의 의미가 명확하고, 이후 필드(예: 힌트)가 추가되어도 기존 데이터와 호환됨. README 6번 섹션에 필드별 설명이 있음.
+> 충족: [`high_score`](../apps/state.json#L2)(전체 상태)와 [`questions`](../apps/state.json#L3-L54)(문제 목록)를 최상위에 두고, 각 문제를 `question`/`options`/`answer` 필드를 가진 dict로 표현함. 리스트만으로 저장하는 것보다 필드 이름이 있어 값의 의미가 명확하고, 이후 필드(예: 힌트)가 추가되어도 기존 데이터와 호환됨. [README 6번 섹션](../README.md#L109-L137)에 필드별 설명이 있음.
 
 **(PASS / FAIL)**
 
@@ -99,14 +99,14 @@
 
 **4-1.** 퀴즈 데이터가 1000개 이상으로 늘어난다면 현재 JSON 저장 방식에 어떤 한계가 생길 수 있는지 설명할 수 있는가?
 
-> 충족: 현재 `load_data()`/`save_data()`는 매번 파일 전체를 읽고 전체를 다시 씀. 문제가 1000개 이상이면 문제 하나만 추가/조회해도 전체 파일을 읽고 쓰게 되어 느려지고, 저장 도중 프로그램이 중단되면 파일 전체가 손상될 위험도 커짐(부분 업데이트가 불가능한 구조). 이런 규모에서는 DB(SQLite 등)로 옮기는 것이 더 적합함을 설명할 수 있음.
+> 충족: 현재 [`load_data()`](../apps/main.py#L111-L139)/[`save_data()`](../apps/main.py#L142-L152)는 매번 파일 전체를 읽고 전체를 다시 씀. 문제가 1000개 이상이면 문제 하나만 추가/조회해도 전체 파일을 읽고 쓰게 되어 느려지고, 저장 도중 프로그램이 중단되면 파일 전체가 손상될 위험도 커짐(부분 업데이트가 불가능한 구조). 이런 규모에서는 DB(SQLite 등)로 옮기는 것이 더 적합함을 설명할 수 있음.
 
 **4-2.** 만약 state.json이 손상되어 JSON 파싱에 실패한다면, 사용자가 데이터를 잃지 않도록 어떤 대응(복구/백업/초기화)이 가능한지 설명할 수 있는가?
 
-> 충족: `load_data()`의 `except (json.JSONDecodeError, ValueError):`에서 손상을 감지하면 안내 메시지를 출력하고 `get_default_data()`(기본 퀴즈 5개)로 복구한 뒤 `save_data()`로 파일도 정상 상태로 다시 저장함. `FileNotFoundError`(파일 없음)도 동일하게 `get_default_data()`를 사용함. 다만 손상 전 데이터 자체를 별도로 백업하지는 않으므로, 복구 전 원본을 `.bak` 등으로 남기는 방식으로 개선할 수 있다는 점까지 설명 가능.
+> 충족: [`load_data()`](../apps/main.py#L111-L139)의 [`except (json.JSONDecodeError, ValueError):`](../apps/main.py#L133-L139)에서 손상을 감지하면 안내 메시지를 출력하고 [`get_default_data()`](../apps/main.py#L17-L55)(기본 퀴즈 5개)로 복구한 뒤 [`save_data()`](../apps/main.py#L142-L152)로 파일도 정상 상태로 다시 저장함. `FileNotFoundError`(파일 없음)도 동일하게 [`get_default_data()`](../apps/main.py#L17-L55)를 사용함. 다만 손상 전 데이터 자체를 별도로 백업하지는 않으므로, 복구 전 원본을 `.bak` 등으로 남기는 방식으로 개선할 수 있다는 점까지 설명 가능.
 
 **4-3.** "정답 채점 방식(점수 계산)"이나 "퀴즈 구조(선택지 개수 등)" 요구사항이 바뀐다면, 어떤 파일/클래스/메서드를 먼저 수정해야 하는지 설명할 수 있는가?
 
-> 충족: 채점 방식 변경은 `QuizGame.check_answer()`, 퀴즈 구조(선택지 개수 등) 변경은 `Quiz.__init__()`과 `state.json` 스키마, 그리고 이를 읽어 `Quiz` 객체로 변환하는 `main.py`의 `run_quiz()` 내부 반복문을 함께 수정해야 함을 짚어낼 수 있음.
+> 충족: 채점 방식 변경은 [`QuizGame.check_answer()`](../apps/QuizGame.py#L60-L75), 퀴즈 구조(선택지 개수 등) 변경은 [`Quiz.__init__()`](../apps/Quiz.py#L9-L19)과 [`state.json`](../apps/state.json) 스키마, 그리고 이를 읽어 [`Quiz`](../apps/Quiz.py) 객체로 변환하는 [`main.py`](../apps/main.py)의 [`run_quiz()`](../apps/main.py#L155-L187) 내부 반복문을 함께 수정해야 함을 짚어낼 수 있음.
 
 **(PASS / FAIL)**
