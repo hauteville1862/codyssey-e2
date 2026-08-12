@@ -50,7 +50,7 @@ class Storage:
         except FileNotFoundError:
             return self.get_default_data()
 
-        except (json.JSONDecodeError, ValueError):
+        except ValueError:
             print("\n[알림] 데이터 파일이 손상되어 기본 퀴즈 데이터로 초기화합니다.")
             recovered = self.get_default_data()
             self.save(recovered)
