@@ -89,10 +89,10 @@ codyssey-e2/
 │   ├── git-clone.png        # clone 실습 스크린샷
 │   └── git-pull.png         # pull 실습 스크린샷
 └── apps/
-    ├── main.py          # 진입점: 메뉴 출력, 입력 검증, 각 기능 실행 함수(CLI)
-    ├── Quiz.py          # Quiz 클래스: 문제 1개(question/choices/answer)를 표현
-    ├── QuizGame.py      # QuizGame 클래스: 퀴즈 진행(출제·정답 확인·점수 계산) 담당
-    ├── Storage.py       # Storage 클래스: state.json 로드/저장, 기본 퀴즈 데이터 제공
+    ├── main.py          # 진입점: 메뉴 출력, 입력 검증, 화면 출력 등 CLI(입출력) 담당
+    ├── quiz.py          # Quiz 클래스: 문제 1개(question/choices/answer)를 표현
+    ├── quiz_game.py     # QuizGame 클래스: 진행 상태·점수 계산 등 순수 게임 로직 담당(입출력 없음)
+    ├── storage.py       # Storage 클래스: state.json 로드/저장, 기본 퀴즈 데이터 제공
     └── state.json       # 퀴즈 데이터 + 최고 점수 저장 파일 (UTF-8)
 ```
 
@@ -100,13 +100,21 @@ codyssey-e2/
 
 - **`Quiz`** — 문제 하나의 데이터만 표현하는 값 객체. `question`(문제), `choices`(보기 4개),
   `answer`(정답 번호 1~4) 속성을 가짐.
-- **`QuizGame`** — 퀴즈 진행을 담당. 문제 목록을 순회하며 출제하고(`next_question`), 사용자
-  입력을 검증한 뒤 정답 여부를 판정·점수를 누적함(`check_answer`).
+- **`QuizGame`** — 퀴즈 진행 상태만 관리하는 순수 로직 클래스. 다음 문제가 남았는지 확인하고
+  (`still_has_questions`), 현재 문제를 꺼내주고(`get_current_question`), 제출된 답을 채점해
+  점수를 누적함(`submit_answer`). `print`/`input`을 전혀 쓰지 않아 화면 출력과 완전히 분리돼
+  있음 — 그래서 콘솔 없이도(예: 자동화된 테스트) 채점 로직만 따로 검증할 수 있음.
 - **`Storage`** — `state.json` 파일 입출력을 전담. 파일을 읽어 오고(`load`), 저장하며(`save`),
   파일이 없거나 손상된 경우 사용할 기본 퀴즈 데이터를 제공함(`get_default_data`).
-- **`main.py`** — 메뉴 출력과 입력 처리(CLI)를 담당. `Quiz`/`QuizGame`은 파일 입출력을,
-  `Storage`는 화면/게임 로직을 전혀 알지 못하며, `main.py`가 `Storage` 인스턴스가 돌려준
-  `dict`를 `Quiz` 인스턴스로 변환해 `QuizGame`에 넘기는 조립 역할을 함.
+- **`main.py`** — 메뉴 출력, 입력 검증(`get_valid_int`), 문제/보기 출력 등 **모든 화면 입출력**을
+  담당. `Quiz`/`QuizGame`/`Storage`는 서로의 존재를 몰라도 되도록 설계돼 있고, `main.py`가
+  `Storage`가 돌려준 `dict`를 `Quiz` 인스턴스로 변환해 `QuizGame`에 넘기고, `QuizGame`의 판정
+  결과를 받아 화면에 출력하는 조립 역할을 함.
+
+> 이렇게 "입력 처리(검증)"는 `main.py`의 `get_valid_int`, "게임 진행(채점·점수)"은
+> `QuizGame`, "데이터 저장/불러오기"는 `Storage`로 분리했다. `QuizGame`이 처음엔 `input`/
+> `print`까지 직접 하고 있었는데, 그렇게 두면 채점 로직만 따로 테스트하거나 재사용하기 어려워
+> 화면 입출력 책임을 `main.py`로 옮기는 리팩터링을 거쳤다.
 
 ## 6. 데이터 파일 설명 (`state.json`)
 

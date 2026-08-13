@@ -45,7 +45,24 @@ def run_quiz():
 
     quiz = QuizGame(question_bank)
     while quiz.still_has_questions():
-        quiz.next_question()
+        current_question = quiz.get_current_question()
+
+        print(f"\nQ.{quiz.question_number + 1}: {current_question.question}")
+        number = 1
+        for choice in current_question.choices:
+            print(f"   {number}) {choice}")
+            number += 1
+
+        user_answer = get_valid_int("\n정답을 입력하세요 (1-4): ", 1, 4)
+        is_correct = quiz.submit_answer(user_answer)
+
+        if is_correct:
+            print("정답입니다!")
+        else:
+            print("틀렸습니다.")
+            print(f"정답은 {current_question.answer}번이었습니다.")
+
+        print(f"현재 점수: {quiz.score}/{quiz.question_number}")
 
     print("\n" + "="*30)
     print(f"퀴즈 종료! 최종 점수: {quiz.score}/{len(question_bank)}")
