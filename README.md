@@ -9,7 +9,7 @@
 - **형태**: 콘솔 퀴즈 게임 1개 + GitHub 저장소 1개
 - **핵심 기능**: 퀴즈 풀기 / 퀴즈 추가 / 퀴즈 목록 보기 / 최고 점수 확인
 - **핵심 학습 목표**
-  - 클래스(`Quiz`, `QuizGame`, `Storage`)로 역할을 나눠 코드를 구조화함
+  - 클래스(`Quiz`, `QuizGame`, `Storage`, `QuizCLI`)로 역할을 나눠 코드를 구조화함
   - JSON 파일(`state.json`)로 데이터를 저장·불러와 데이터 영속성을 구현함
   - 잘못된 입력, 파일 손상, 강제 종료(Ctrl+C) 상황에서도 안전하게 동작하도록 예외 처리함
   - Git으로 기능 단위 커밋 및 브랜치 작업 이력을 관리함
@@ -89,7 +89,7 @@ codyssey-e2/
 │   ├── git-clone.png        # clone 실습 스크린샷
 │   └── git-pull.png         # pull 실습 스크린샷
 └── apps/
-    ├── main.py          # 진입점: 메뉴 출력, 입력 검증, 화면 출력 등 CLI(입출력) 담당
+    ├── main.py          # 진입점: QuizCLI 클래스 정의 + 실행(app = QuizCLI(); app.main_menu())
     ├── quiz.py          # Quiz 클래스: 문제 1개(question/choices/answer)를 표현
     ├── quiz_game.py     # QuizGame 클래스: 진행 상태·점수 계산 등 순수 게임 로직 담당(입출력 없음)
     ├── storage.py       # Storage 클래스: state.json 로드/저장, 기본 퀴즈 데이터 제공
@@ -106,15 +106,20 @@ codyssey-e2/
   있음 — 그래서 콘솔 없이도(예: 자동화된 테스트) 채점 로직만 따로 검증할 수 있음.
 - **`Storage`** — `state.json` 파일 입출력을 전담. 파일을 읽어 오고(`load`), 저장하며(`save`),
   파일이 없거나 손상된 경우 사용할 기본 퀴즈 데이터를 제공함(`get_default_data`).
-- **`main.py`** — 메뉴 출력, 입력 검증(`get_valid_int`), 문제/보기 출력 등 **모든 화면 입출력**을
-  담당. `Quiz`/`QuizGame`/`Storage`는 서로의 존재를 몰라도 되도록 설계돼 있고, `main.py`가
-  `Storage`가 돌려준 `dict`를 `Quiz` 인스턴스로 변환해 `QuizGame`에 넘기고, `QuizGame`의 판정
-  결과를 받아 화면에 출력하는 조립 역할을 함.
+- **`QuizCLI`**(`main.py`) — 메뉴 출력, 입력 검증(`get_valid_int`), 문제/보기 출력 등 **모든
+  화면 입출력**을 담당. 생성자(`__init__`)에서 `Storage` 인스턴스를 `self.storage`로 만들어
+  들고 있고(예전에는 파일 최상단에 `storage = Storage()`로 전역 변수였음), `Quiz`/`QuizGame`/
+  `Storage`는 서로의 존재를 몰라도 되도록 설계돼 있음. `Storage`가 돌려준 `dict`를 `Quiz`
+  인스턴스로 변환해 `QuizGame`에 넘기고, `QuizGame`의 판정 결과를 받아 화면에 출력하는 조립
+  역할을 함. 실제 실행은 `if __name__ == "__main__":`에서 `QuizCLI()` 인스턴스를 하나 만들어
+  `main_menu()`를 호출하는 것으로 시작함.
 
-> 이렇게 "입력 처리(검증)"는 `main.py`의 `get_valid_int`, "게임 진행(채점·점수)"은
-> `QuizGame`, "데이터 저장/불러오기"는 `Storage`로 분리했다. `QuizGame`이 처음엔 `input`/
+> 이렇게 "입력 처리(검증)"는 `QuizCLI`의 `get_valid_int`, "게임 진행(채점·점수)"은
+> `QuizGame`, "데이터 저장/불러오기"는 `Storage`로 분리했다. `QuizGame`은 처음엔 `input`/
 > `print`까지 직접 하고 있었는데, 그렇게 두면 채점 로직만 따로 테스트하거나 재사용하기 어려워
-> 화면 입출력 책임을 `main.py`로 옮기는 리팩터링을 거쳤다.
+> 화면 입출력 책임을 `main.py`로 옮기는 리팩터링을 거쳤다. 이후 `main.py`에 흩어져 있던
+> 함수들과 전역 변수 `storage`를 `QuizCLI` 클래스 하나로 묶어, 함수 사이에 암묵적으로 공유되던
+> `storage`를 `self.storage`로 명시적인 인스턴스 상태로 바꿨다.
 
 ## 6. 데이터 파일 설명 (`state.json`)
 
