@@ -1,4 +1,3 @@
-import os
 import sys
 
 from Quiz import Quiz
@@ -6,14 +5,6 @@ from QuizGame import QuizGame
 from Storage import Storage
 
 storage = Storage()
-
-
-def clear_screen():
-    if os.name == 'nt':
-        os.system('cls')
-    else:
-        os.system('clear')
-
 
 def get_valid_int(prompt, min_value, max_value):
     while True:
@@ -65,7 +56,6 @@ def run_quiz():
 
 
 def add_new_question():
-    clear_screen()
     print("[새 문제 추가]")
 
     question = input("문제 내용을 입력하세요: ").strip()
@@ -93,7 +83,6 @@ def add_new_question():
 
 
 def view_question_list():
-    clear_screen()
     data = storage.load()
     print("[등록된 퀴즈 목록]")
 
@@ -110,7 +99,6 @@ def view_question_list():
 
 
 def show_high_score():
-    clear_screen()
     data = storage.load()
     print("[현재 최고 점수]")
     print(f"\n현재까지의 최고 기록은 {data['high_score']}점입니다.")
@@ -121,7 +109,6 @@ def show_high_score():
 
 def main_menu():
     while True:
-        clear_screen()
         print("="*40)
         print("      세계 문학 작가 퀴즈")
         print("="*40)
