@@ -1,8 +1,12 @@
 import sys
 
-from Quiz import Quiz
-from QuizGame import QuizGame
-from Storage import Storage
+if hasattr(sys.stdin, "reconfigure"):
+    sys.stdin.reconfigure(encoding="utf-8")
+    sys.stdout.reconfigure(encoding="utf-8")
+
+from quiz import Quiz
+from quiz_game import QuizGame
+from storage import Storage
 
 storage = Storage()
 
