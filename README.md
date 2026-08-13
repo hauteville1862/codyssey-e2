@@ -89,7 +89,8 @@ codyssey-e2/
 │   ├── git-clone.png        # clone 실습 스크린샷
 │   └── git-pull.png         # pull 실습 스크린샷
 └── apps/
-    ├── main.py          # 진입점: QuizCLI 클래스 정의 + 실행(app = QuizCLI(); app.main_menu())
+    ├── main.py          # 진입점: QuizCLI를 불러와 실행만 함(app = QuizCLI(); app.main_menu())
+    ├── quiz_cli.py      # QuizCLI 클래스: 메뉴 출력·입력 검증 등 화면 입출력 담당
     ├── quiz.py          # Quiz 클래스: 문제 1개(question/choices/answer)를 표현
     ├── quiz_game.py     # QuizGame 클래스: 진행 상태·점수 계산 등 순수 게임 로직 담당(입출력 없음)
     ├── storage.py       # Storage 클래스: state.json 로드/저장, 기본 퀴즈 데이터 제공
@@ -106,13 +107,13 @@ codyssey-e2/
   있음 — 그래서 콘솔 없이도(예: 자동화된 테스트) 채점 로직만 따로 검증할 수 있음.
 - **`Storage`** — `state.json` 파일 입출력을 전담. 파일을 읽어 오고(`load`), 저장하며(`save`),
   파일이 없거나 손상된 경우 사용할 기본 퀴즈 데이터를 제공함(`get_default_data`).
-- **`QuizCLI`**(`main.py`) — 메뉴 출력, 입력 검증(`get_valid_int`), 문제/보기 출력 등 **모든
-  화면 입출력**을 담당. 생성자(`__init__`)에서 `Storage` 인스턴스를 `self.storage`로 만들어
-  들고 있고(예전에는 파일 최상단에 `storage = Storage()`로 전역 변수였음), `Quiz`/`QuizGame`/
-  `Storage`는 서로의 존재를 몰라도 되도록 설계돼 있음. `Storage`가 돌려준 `dict`를 `Quiz`
-  인스턴스로 변환해 `QuizGame`에 넘기고, `QuizGame`의 판정 결과를 받아 화면에 출력하는 조립
-  역할을 함. 실제 실행은 `if __name__ == "__main__":`에서 `QuizCLI()` 인스턴스를 하나 만들어
-  `main_menu()`를 호출하는 것으로 시작함.
+- **`QuizCLI`**(`quiz_cli.py`) — 메뉴 출력, 입력 검증(`get_valid_int`), 문제/보기 출력 등
+  **모든 화면 입출력**을 담당. 생성자(`__init__`)에서 `Storage` 인스턴스를 `self.storage`로
+  만들어 들고 있고(예전에는 파일 최상단에 `storage = Storage()`로 전역 변수였음), `Quiz`/
+  `QuizGame`/`Storage`는 서로의 존재를 몰라도 되도록 설계돼 있음. `Storage`가 돌려준 `dict`를
+  `Quiz` 인스턴스로 변환해 `QuizGame`에 넘기고, `QuizGame`의 판정 결과를 받아 화면에 출력하는
+  조립 역할을 함. `main.py`는 이제 표준 입출력을 UTF-8로 맞추고 `QuizCLI()` 인스턴스를 만들어
+  `main_menu()`를 호출·예외 처리만 하는 얇은 진입점으로 남음.
 
 > 이렇게 "입력 처리(검증)"는 `QuizCLI`의 `get_valid_int`, "게임 진행(채점·점수)"은
 > `QuizGame`, "데이터 저장/불러오기"는 `Storage`로 분리했다. `QuizGame`은 처음엔 `input`/
