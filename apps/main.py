@@ -1,9 +1,5 @@
 import sys
 
-if hasattr(sys.stdin, "reconfigure"):
-    sys.stdin.reconfigure(encoding="utf-8")
-    sys.stdout.reconfigure(encoding="utf-8")
-
 from quiz_cli import QuizCLI
 
 

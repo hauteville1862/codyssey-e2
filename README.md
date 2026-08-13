@@ -112,8 +112,8 @@ codyssey-e2/
   만들어 들고 있고(예전에는 파일 최상단에 `storage = Storage()`로 전역 변수였음), `Quiz`/
   `QuizGame`/`Storage`는 서로의 존재를 몰라도 되도록 설계돼 있음. `Storage`가 돌려준 `dict`를
   `Quiz` 인스턴스로 변환해 `QuizGame`에 넘기고, `QuizGame`의 판정 결과를 받아 화면에 출력하는
-  조립 역할을 함. `main.py`는 이제 표준 입출력을 UTF-8로 맞추고 `QuizCLI()` 인스턴스를 만들어
-  `main_menu()`를 호출·예외 처리만 하는 얇은 진입점으로 남음.
+  조립 역할을 함. `main.py`는 이제 `QuizCLI()` 인스턴스를 만들어 `main_menu()`를 호출·예외
+  처리만 하는 얇은 진입점으로 남음.
 
 > 이렇게 "입력 처리(검증)"는 `QuizCLI`의 `get_valid_int`, "게임 진행(채점·점수)"은
 > `QuizGame`, "데이터 저장/불러오기"는 `Storage`로 분리했다. `QuizGame`은 처음엔 `input`/
