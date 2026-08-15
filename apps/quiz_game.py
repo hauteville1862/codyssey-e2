@@ -11,10 +11,9 @@ class QuizGame:
         return self.question_list[self.question_number]
 
     def submit_answer(self, user_answer):
-        current_question = self.get_current_question()
+        is_correct = user_answer == self.get_current_question().answer
         self.question_number += 1
 
-        is_correct = user_answer == current_question.answer
         if is_correct:
             self.score += 1
 

@@ -44,15 +44,12 @@ class QuizCLI:
             current_question = quiz.get_current_question()
 
             print(f"\nQ.{quiz.question_number + 1}: {current_question.question}")
-            number = 1
-            for choice in current_question.choices:
+            for number, choice in enumerate(current_question.choices, 1):
                 print(f"   {number}) {choice}")
-                number += 1
 
             user_answer = self.get_valid_int("\n정답을 입력하세요 (1-4): ", 1, 4)
-            is_correct = quiz.submit_answer(user_answer)
 
-            if is_correct:
+            if quiz.submit_answer(user_answer):
                 print("정답입니다!")
             else:
                 print("틀렸습니다.")
@@ -90,8 +87,9 @@ class QuizCLI:
         answer = self.get_valid_int("정답 번호를 입력하세요 (1-4): ", 1, 4)
 
         data = self.storage.load()
-        new_q = {"question": question, "choices": choices, "answer": answer}
-        data["questions"].append(new_q)
+        data["questions"].append(
+            {"question": question, "choices": choices, "answer": answer}
+        )
         self.storage.save(data)
 
         print("\n문제가 성공적으로 추가되었습니다!")
@@ -104,10 +102,8 @@ class QuizCLI:
         if not data["questions"]:
             print("등록된 문제가 없습니다.")
         else:
-            number = 1
-            for q in data["questions"]:
+            for number, q in enumerate(data["questions"], 1):
                 print(f"{number}. {q['question']} (정답: {q['answer']}번)")
-                number += 1
 
         print("-" * 30)
         input("\n엔터를 누르면 메뉴로 돌아갑니다...")
